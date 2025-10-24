@@ -452,7 +452,7 @@ mvn clean install -U
 
 - **学生姓名**：於泊臻
 - **学号**：2335020234
-- **GitHub**：[你的仓库地址]
+- **GitHub**：https://github.com/Fantasy132/CoursesSelectionSystem
 - **邮箱**：1321765450@qq.com
 
 ## 📄 License
