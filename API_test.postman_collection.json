@@ -1,0 +1,1456 @@
+{
+	"info": {
+		"_postman_id": "course-management-system",
+		"name": "校园选课系统API测试",
+		"description": "校园选课与教学资源管理平台 - 单体版API测试集合",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "一、课程管理API",
+			"item": [
+				{
+					"name": "1.1 创建课程 - CS101",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// 验证状态码",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"// 提取课程ID",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"course_id_cs101\", jsonData.data.id);",
+									"    console.log(\"课程ID已保存: \" + jsonData.data.id);",
+									"}",
+									"",
+									"// 验证响应数据",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    pm.expect(jsonData).to.have.property('code');",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"CS101\",\n  \"title\": \"计算机科学导论\",\n  \"instructor\": {\n    \"id\": \"T001\",\n    \"name\": \"张教授\",\n    \"email\": \"zhang@example.edu.cn\"\n  },\n  \"schedule\": {\n    \"dayOfWeek\": \"MONDAY\",\n    \"startTime\": \"08:00\",\n    \"endTime\": \"10:00\",\n    \"expectedAttendance\": 50\n  },\n  \"capacity\": 60\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						},
+						"description": "创建一门新课程：计算机科学导论"
+					},
+					"response": []
+				},
+				{
+					"name": "1.2 创建课程 - CS102",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"course_id_cs102\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"CS102\",\n  \"title\": \"数据结构\",\n  \"instructor\": {\n    \"id\": \"T002\",\n    \"name\": \"李教授\",\n    \"email\": \"li@example.edu.cn\"\n  },\n  \"schedule\": {\n    \"dayOfWeek\": \"WEDNESDAY\",\n    \"startTime\": \"14:00\",\n    \"endTime\": \"16:00\",\n    \"expectedAttendance\": 40\n  },\n  \"capacity\": 50\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.3 创建课程 - CS103",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"course_id_cs103\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"CS103\",\n  \"title\": \"算法设计与分析\",\n  \"instructor\": {\n    \"id\": \"T003\",\n    \"name\": \"王教授\",\n    \"email\": \"wang@example.edu.cn\"\n  },\n  \"schedule\": {\n    \"dayOfWeek\": \"FRIDAY\",\n    \"startTime\": \"10:00\",\n    \"endTime\": \"12:00\",\n    \"expectedAttendance\": 45\n  },\n  \"capacity\": 55\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.4 查询所有课程",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						},
+						"description": "获取所有课程列表"
+					},
+					"response": []
+				},
+				{
+					"name": "1.5 查询单个课程",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Course details returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('code');",
+									"    pm.expect(jsonData.data).to.have.property('title');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_id_cs101}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{course_id_cs101}}"
+							]
+						},
+						"description": "根据ID查询课程详情"
+					},
+					"response": []
+				},
+				{
+					"name": "1.6 更新课程信息",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"CS101\",\n  \"title\": \"计算机科学导论（更新版）\",\n  \"instructor\": {\n    \"id\": \"T001\",\n    \"name\": \"张教授\",\n    \"email\": \"zhang@example.edu.cn\"\n  },\n  \"schedule\": {\n    \"dayOfWeek\": \"TUESDAY\",\n    \"startTime\": \"10:00\",\n    \"endTime\": \"12:00\",\n    \"expectedAttendance\": 55\n  },\n  \"capacity\": 65\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_id_cs101}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{course_id_cs101}}"
+							]
+						},
+						"description": "更新课程信息"
+					},
+					"response": []
+				},
+				{
+					"name": "1.7 删除课程",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 204\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_id_cs103}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{course_id_cs103}}"
+							]
+						},
+						"description": "删除指定课程"
+					},
+					"response": []
+				},
+				{
+					"name": "1.8 查询已删除的课程（应返回404）",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_id_cs103}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{course_id_cs103}}"
+							]
+						},
+						"description": "验证已删除的课程返回404"
+					},
+					"response": []
+				}
+			],
+			"description": "课程管理相关的所有API接口"
+		},
+		{
+			"name": "二、学生管理API",
+			"item": [
+				{
+					"name": "2.1 创建学生 - S2024001",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"student_id_2024001\", jsonData.data.id);",
+									"    console.log(\"学生ID已保存: \" + jsonData.data.id);",
+									"}",
+									"",
+									"pm.test(\"Student created with correct data\", function () {",
+									"    pm.expect(jsonData.data).to.have.property('studentId');",
+									"    pm.expect(jsonData.data).to.have.property('createdAt');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"studentId\": \"S2024001\",\n  \"name\": \"张小明\",\n  \"major\": \"计算机科学与技术\",\n  \"grade\": 2024,\n  \"email\": \"zhangxiaoming@example.edu.cn\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						},
+						"description": "创建新学生"
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 创建学生 - S2024002",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"student_id_2024002\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"studentId\": \"S2024002\",\n  \"name\": \"李小红\",\n  \"major\": \"软件工程\",\n  \"grade\": 2024,\n  \"email\": \"lixiaohong@example.edu.cn\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.3 创建学生 - S2024003",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"student_id_2024003\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"studentId\": \"S2024003\",\n  \"name\": \"王小刚\",\n  \"major\": \"信息安全\",\n  \"grade\": 2024,\n  \"email\": \"wangxiaogang@example.edu.cn\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.4 查询所有学生",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returns array of students\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						},
+						"description": "获取所有学生列表"
+					},
+					"response": []
+				},
+				{
+					"name": "2.5 根据ID查询学生",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Student details returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('studentId');",
+									"    pm.expect(jsonData.data).to.have.property('name');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id_2024001}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id_2024001}}"
+							]
+						},
+						"description": "根据ID查询学生详情"
+					},
+					"response": []
+				},
+				{
+					"name": "2.6 更新学生信息",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"studentId\": \"S2024001\",\n  \"name\": \"张小明\",\n  \"major\": \"人工智能\",\n  \"grade\": 2024,\n  \"email\": \"zhangxiaoming_new@example.edu.cn\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id_2024001}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id_2024001}}"
+							]
+						},
+						"description": "更新学生信息"
+					},
+					"response": []
+				},
+				{
+					"name": "2.7 删除学生（无选课记录）",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 204\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id_2024003}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id_2024003}}"
+							]
+						},
+						"description": "删除没有选课记录的学生"
+					},
+					"response": []
+				},
+				{
+					"name": "2.8 创建重复学号（应失败）",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error message about duplicate student ID\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('already exists');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"studentId\": \"S2024001\",\n  \"name\": \"重复学号\",\n  \"major\": \"测试专业\",\n  \"grade\": 2024,\n  \"email\": \"duplicate@example.edu.cn\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						},
+						"description": "测试学号重复验证"
+					},
+					"response": []
+				},
+				{
+					"name": "2.9 创建无效邮箱（应失败）",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"studentId\": \"S2024999\",\n  \"name\": \"测试学生\",\n  \"major\": \"测试专业\",\n  \"grade\": 2024,\n  \"email\": \"invalid-email\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						},
+						"description": "测试邮箱格式验证"
+					},
+					"response": []
+				}
+			],
+			"description": "学生管理相关的所有API接口"
+		},
+		{
+			"name": "三、选课管理API",
+			"item": [
+				{
+					"name": "3.1 创建小容量课程（容量2）",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"small_course_id\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"CS201\",\n  \"title\": \"小班课程\",\n  \"instructor\": {\n    \"id\": \"T004\",\n    \"name\": \"赵教授\",\n    \"email\": \"zhao@example.edu.cn\"\n  },\n  \"schedule\": {\n    \"dayOfWeek\": \"MONDAY\",\n    \"startTime\": \"14:00\",\n    \"endTime\": \"16:00\",\n    \"expectedAttendance\": 2\n  },\n  \"capacity\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						},
+						"description": "创建一个容量为2的课程用于测试容量限制"
+					},
+					"response": []
+				},
+				{
+					"name": "3.2 创建测试学生 S001",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"student_id_s001\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"studentId\": \"S001\",\n  \"name\": \"学生一\",\n  \"major\": \"计算机科学与技术\",\n  \"grade\": 2024,\n  \"email\": \"student001@example.edu.cn\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.3 创建测试学生 S002",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"student_id_s002\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"studentId\": \"S002\",\n  \"name\": \"学生二\",\n  \"major\": \"软件工程\",\n  \"grade\": 2024,\n  \"email\": \"student002@example.edu.cn\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.4 创建测试学生 S003",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"student_id_s003\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"studentId\": \"S003\",\n  \"name\": \"学生三\",\n  \"major\": \"信息安全\",\n  \"grade\": 2024,\n  \"email\": \"student003@example.edu.cn\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.5 学生S001选课",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"enrollment_id_1\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"courseId\": \"{{small_course_id}}\",\n  \"studentId\": \"{{student_id_s001}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/enrollments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"enrollments"
+							]
+						},
+						"description": "第一个学生选课，应该成功"
+					},
+					"response": []
+				},
+				{
+					"name": "3.6 学生S002选课",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"enrollment_id_2\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"courseId\": \"{{small_course_id}}\",\n  \"studentId\": \"{{student_id_s002}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/enrollments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"enrollments"
+							]
+						},
+						"description": "第二个学生选课，应该成功，课程达到容量上限"
+					},
+					"response": []
+				},
+				{
+					"name": "3.7 学生S003选课（应失败-课程已满）",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error message about course full\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message.toLowerCase()).to.include('full');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"courseId\": \"{{small_course_id}}\",\n  \"studentId\": \"{{student_id_s003}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/enrollments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"enrollments"
+							]
+						},
+						"description": "第三个学生选课，课程已满应该失败"
+					},
+					"response": []
+				},
+				{
+					"name": "3.8 学生S001重复选课（应失败）",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error message about already enrolled\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message.toLowerCase()).to.include('already');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"courseId\": \"{{small_course_id}}\",\n  \"studentId\": \"{{student_id_s001}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/enrollments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"enrollments"
+							]
+						},
+						"description": "学生重复选同一门课，应该失败"
+					},
+					"response": []
+				},
+				{
+					"name": "3.9 查询课程验证enrolled字段",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Enrolled count is 2\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.enrolled).to.eql(2);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{small_course_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{small_course_id}}"
+							]
+						},
+						"description": "查询课程，验证enrolled字段为2"
+					},
+					"response": []
+				},
+				{
+					"name": "3.10 查询所有选课记录",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returns array of enrollments\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/enrollments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"enrollments"
+							]
+						},
+						"description": "获取所有选课记录"
+					},
+					"response": []
+				},
+				{
+					"name": "3.11 按课程查询选课记录",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/enrollments/course/{{small_course_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"enrollments",
+								"course",
+								"{{small_course_id}}"
+							]
+						},
+						"description": "查询指定课程的所有选课记录"
+					},
+					"response": []
+				},
+				{
+					"name": "3.12 按学生查询选课记录",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/enrollments/student/{{student_id_s001}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"enrollments",
+								"student",
+								"{{student_id_s001}}"
+							]
+						},
+						"description": "查询指定学生的所有选课记录"
+					},
+					"response": []
+				},
+				{
+					"name": "3.13 尝试删除有选课记录的学生（应失败）",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error message about enrollment records\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('选课记录');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id_s001}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id_s001}}"
+							]
+						},
+						"description": "尝试删除有选课记录的学生，应该失败"
+					},
+					"response": []
+				},
+				{
+					"name": "3.14 学生退课",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 204\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/enrollments/{{enrollment_id_1}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"enrollments",
+								"{{enrollment_id_1}}"
+							]
+						},
+						"description": "学生退课"
+					},
+					"response": []
+				}
+			],
+			"description": "选课管理相关的所有API接口"
+		},
+		{
+			"name": "四、错误处理测试",
+			"item": [
+				{
+					"name": "4.1 查询不存在的课程",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/non-existent-id-12345",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"non-existent-id-12345"
+							]
+						},
+						"description": "测试404错误"
+					},
+					"response": []
+				},
+				{
+					"name": "4.2 创建课程缺少必填字段",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"CS999\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						},
+						"description": "测试必填字段验证"
+					},
+					"response": []
+				},
+				{
+					"name": "4.3 选课时课程不存在",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"courseId\": \"non-existent-course-id\",\n  \"studentId\": \"{{student_id_s001}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/enrollments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"enrollments"
+							]
+						},
+						"description": "测试选课时课程不存在"
+					},
+					"response": []
+				},
+				{
+					"name": "4.4 选课时学生不存在",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"courseId\": \"{{course_id_cs101}}\",\n  \"studentId\": \"non-existent-student-id\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/enrollments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"enrollments"
+							]
+						},
+						"description": "测试选课时学生不存在"
+					},
+					"response": []
+				}
+			],
+			"description": "各种错误场景的测试"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

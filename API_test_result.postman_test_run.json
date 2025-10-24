@@ -1,0 +1,1107 @@
+{
+	"id": "d1498828-6549-40b8-83ab-56e0c296e0cc",
+	"name": "校园选课系统API测试",
+	"timestamp": "2025-10-24T14:14:16.425Z",
+	"collection_id": "49391318-0b28b4a9-85dc-4a52-b225-d48bcb9d8a22",
+	"folder_id": 0,
+	"environment_id": "49391318-a12ab7ac-1929-4735-b75d-15b5ef787da7",
+	"totalPass": 35,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2025-10-24T14:14:13.128Z",
+	"totalFail": 4,
+	"results": [
+		{
+			"id": "15dad124-acf0-46dd-b207-5008c218f269",
+			"name": "1.1 创建课程 - CS101",
+			"url": "http://localhost:8080/api/courses",
+			"time": 9,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Response has correct structure": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has correct structure": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Response has correct structure": true
+				}
+			]
+		},
+		{
+			"id": "55a3d7a1-a8a2-4a98-9c12-907b20e9645b",
+			"name": "1.2 创建课程 - CS102",
+			"url": "http://localhost:8080/api/courses",
+			"time": 3,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				3
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "0a8234d1-e4fe-46e1-8510-1a012cfee29a",
+			"name": "1.3 创建课程 - CS103",
+			"url": "http://localhost:8080/api/courses",
+			"time": 3,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				3
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "a058faec-cab7-461e-90eb-cb2741fb6fb4",
+			"name": "1.4 查询所有课程",
+			"url": "http://localhost:8080/api/courses",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response is an array": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response is an array": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response is an array": true
+				}
+			]
+		},
+		{
+			"id": "3c263717-3b6c-42fe-9d2a-af66e5833807",
+			"name": "1.5 查询单个课程",
+			"url": "http://localhost:8080/api/courses/c8d7b907-f1ad-4f97-98f7-952c72a5dc49",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Course details returned": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Course details returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Course details returned": true
+				}
+			]
+		},
+		{
+			"id": "d636fed5-ba4d-46fa-8fad-14140f94c616",
+			"name": "1.6 更新课程信息",
+			"url": "http://localhost:8080/api/courses/c8d7b907-f1ad-4f97-98f7-952c72a5dc49",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Status code is 200": true
+				}
+			]
+		},
+		{
+			"id": "10cbf8b9-5799-4cee-96d2-d51983630670",
+			"name": "1.7 删除课程",
+			"url": "http://localhost:8080/api/courses/bfe87171-db17-4736-9516-d6d9823d44c0",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200 or 204": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200 or 204": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 200 or 204": true
+				}
+			]
+		},
+		{
+			"id": "95f05f1d-5e5e-4ec7-b95b-36cf07585d69",
+			"name": "1.8 查询已删除的课程（应返回404）",
+			"url": "http://localhost:8080/api/courses/bfe87171-db17-4736-9516-d6d9823d44c0",
+			"time": 3,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"Status code is 404": true
+			},
+			"testPassFailCounts": {
+				"Status code is 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 404": true
+				}
+			]
+		},
+		{
+			"id": "fc32cfbf-33cc-4239-a438-0e0307930de4",
+			"name": "2.1 创建学生 - S2024001",
+			"url": "http://localhost:8080/api/students",
+			"time": 5,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Student created with correct data": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Student created with correct data": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Student created with correct data": true
+				}
+			]
+		},
+		{
+			"id": "8b375d5c-2e80-4ae8-bac6-055b964a47f9",
+			"name": "2.2 创建学生 - S2024002",
+			"url": "http://localhost:8080/api/students",
+			"time": 3,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				3
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "8325b48e-0afd-4b42-8a8e-8fc1cebeab60",
+			"name": "2.3 创建学生 - S2024003",
+			"url": "http://localhost:8080/api/students",
+			"time": 3,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				3
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "7c06f2d3-5950-4b9f-8ffb-e2050b8330ab",
+			"name": "2.4 查询所有学生",
+			"url": "http://localhost:8080/api/students",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Returns array of students": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Returns array of students": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Returns array of students": true
+				}
+			]
+		},
+		{
+			"id": "8f2596db-13e2-4aaa-ada2-08f9d185409b",
+			"name": "2.5 根据ID查询学生",
+			"url": "http://localhost:8080/api/students/08c216f0-83e7-45c7-a240-e11b4fe2d496",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Student details returned": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Student details returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Student details returned": true
+				}
+			]
+		},
+		{
+			"id": "6826f894-bb83-4591-bd0f-4ab3c1bcd60f",
+			"name": "2.6 更新学生信息",
+			"url": "http://localhost:8080/api/students/08c216f0-83e7-45c7-a240-e11b4fe2d496",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Status code is 200": true
+				}
+			]
+		},
+		{
+			"id": "d729e030-a766-42a5-aae4-85c8e5589356",
+			"name": "2.7 删除学生（无选课记录）",
+			"url": "http://localhost:8080/api/students/82a2c244-0619-4682-bbf8-c48d2e002520",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200 or 204": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200 or 204": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200 or 204": true
+				}
+			]
+		},
+		{
+			"id": "af9ec466-cf86-4ae9-8787-766e82143555",
+			"name": "2.8 创建重复学号（应失败）",
+			"url": "http://localhost:8080/api/students",
+			"time": 3,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 400": false,
+				"Error message about duplicate student ID": false
+			},
+			"testPassFailCounts": {
+				"Status code is 400": {
+					"pass": 0,
+					"fail": 1
+				},
+				"Error message about duplicate student ID": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 400": false,
+					"Error message about duplicate student ID": false
+				}
+			]
+		},
+		{
+			"id": "d312c31c-8cd9-404f-83f4-8170cc33427c",
+			"name": "2.9 创建无效邮箱（应失败）",
+			"url": "http://localhost:8080/api/students",
+			"time": 3,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Status code is 400": true
+			},
+			"testPassFailCounts": {
+				"Status code is 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 400": true
+				}
+			]
+		},
+		{
+			"id": "4ca80f8a-7178-4084-bda6-74a1a693ff2a",
+			"name": "3.1 创建小容量课程（容量2）",
+			"url": "http://localhost:8080/api/courses",
+			"time": 4,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				4
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "dc181164-23a7-4574-9f24-1e1d823d33ca",
+			"name": "3.2 创建测试学生 S001",
+			"url": "http://localhost:8080/api/students",
+			"time": 3,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				3
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "dd9c10c9-6aef-4fac-95b3-0ede3d8b9cbe",
+			"name": "3.3 创建测试学生 S002",
+			"url": "http://localhost:8080/api/students",
+			"time": 3,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				3
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "71891097-9984-4e6d-9a43-13498c49db98",
+			"name": "3.4 创建测试学生 S003",
+			"url": "http://localhost:8080/api/students",
+			"time": 3,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				3
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "fa098b77-c4cb-4451-9ee7-9d21505a5d8f",
+			"name": "3.5 学生S001选课",
+			"url": "http://localhost:8080/api/enrollments",
+			"time": 5,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Status code is 201": true
+				}
+			]
+		},
+		{
+			"id": "7bc335e4-bd00-4912-953f-825d27c0f899",
+			"name": "3.6 学生S002选课",
+			"url": "http://localhost:8080/api/enrollments",
+			"time": 3,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 201": true
+				}
+			]
+		},
+		{
+			"id": "0886da9f-71cd-496a-8c49-4e15ddb1217f",
+			"name": "3.7 学生S003选课（应失败-课程已满）",
+			"url": "http://localhost:8080/api/enrollments",
+			"time": 3,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Status code is 400": true,
+				"Error message about course full": true
+			},
+			"testPassFailCounts": {
+				"Status code is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message about course full": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 400": true,
+					"Error message about course full": true
+				}
+			]
+		},
+		{
+			"id": "3b942298-6ec3-4e72-9ce1-6c5f7b75be5e",
+			"name": "3.8 学生S001重复选课（应失败）",
+			"url": "http://localhost:8080/api/enrollments",
+			"time": 4,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Status code is 400": true,
+				"Error message about already enrolled": false
+			},
+			"testPassFailCounts": {
+				"Status code is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message about already enrolled": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 400": true,
+					"Error message about already enrolled": false
+				}
+			]
+		},
+		{
+			"id": "cdd481f9-2be4-4b5f-af54-743791fef9fa",
+			"name": "3.9 查询课程验证enrolled字段",
+			"url": "http://localhost:8080/api/courses/2405c6ca-5b1e-4689-b911-8b529f4f706f",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Enrolled count is 2": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Enrolled count is 2": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Enrolled count is 2": true
+				}
+			]
+		},
+		{
+			"id": "aac2ac0b-ae8d-46b2-83a7-bf417a18857a",
+			"name": "3.10 查询所有选课记录",
+			"url": "http://localhost:8080/api/enrollments",
+			"time": 2,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Returns array of enrollments": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Returns array of enrollments": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Returns array of enrollments": true
+				}
+			]
+		},
+		{
+			"id": "6f68d413-79f9-47d4-aeb3-faee078fe204",
+			"name": "3.11 按课程查询选课记录",
+			"url": "http://localhost:8080/api/enrollments/course/2405c6ca-5b1e-4689-b911-8b529f4f706f",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 200": true
+				}
+			]
+		},
+		{
+			"id": "48f20c1a-6520-4b90-a9a3-667c9e675fa3",
+			"name": "3.12 按学生查询选课记录",
+			"url": "http://localhost:8080/api/enrollments/student/08620c25-1a04-4c3a-a19f-14c7272ffc10",
+			"time": 2,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Status code is 200": true
+				}
+			]
+		},
+		{
+			"id": "3662417f-2d5f-4053-ab30-e067a8a5290b",
+			"name": "3.13 尝试删除有选课记录的学生（应失败）",
+			"url": "http://localhost:8080/api/students/08620c25-1a04-4c3a-a19f-14c7272ffc10",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Status code is 400": true,
+				"Error message about enrollment records": true
+			},
+			"testPassFailCounts": {
+				"Status code is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message about enrollment records": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Status code is 400": true,
+					"Error message about enrollment records": true
+				}
+			]
+		},
+		{
+			"id": "2f4fa6d2-a65a-44d7-94ef-a86782867d83",
+			"name": "3.14 学生退课",
+			"url": "http://localhost:8080/api/enrollments/edbc02db-37e2-48c8-9c9c-eebdbb970618",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200 or 204": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200 or 204": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200 or 204": true
+				}
+			]
+		},
+		{
+			"id": "5705d276-8d20-49bb-94c3-dfbe36b41533",
+			"name": "4.1 查询不存在的课程",
+			"url": "http://localhost:8080/api/courses/non-existent-id-12345",
+			"time": 2,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"Status code is 404": true
+			},
+			"testPassFailCounts": {
+				"Status code is 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Status code is 404": true
+				}
+			]
+		},
+		{
+			"id": "be6fecb8-23f6-4f7b-83f0-ead6eaa7f834",
+			"name": "4.2 创建课程缺少必填字段",
+			"url": "http://localhost:8080/api/courses",
+			"time": 3,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 400": false
+			},
+			"testPassFailCounts": {
+				"Status code is 400": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 400": false
+				}
+			]
+		},
+		{
+			"id": "a492e20f-cc57-40a9-8fa2-abc5ff436f89",
+			"name": "4.3 选课时课程不存在",
+			"url": "http://localhost:8080/api/enrollments",
+			"time": 2,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"Status code is 404": true
+			},
+			"testPassFailCounts": {
+				"Status code is 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Status code is 404": true
+				}
+			]
+		},
+		{
+			"id": "0627fc89-d1e7-40c8-af19-fda3f4f5ce4f",
+			"name": "4.4 选课时学生不存在",
+			"url": "http://localhost:8080/api/enrollments",
+			"time": 2,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"Status code is 404": true
+			},
+			"testPassFailCounts": {
+				"Status code is 404": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Status code is 404": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 121,
+	"collection": {
+		"requests": [
+			{
+				"id": "15dad124-acf0-46dd-b207-5008c218f269",
+				"method": "POST"
+			},
+			{
+				"id": "55a3d7a1-a8a2-4a98-9c12-907b20e9645b",
+				"method": "POST"
+			},
+			{
+				"id": "0a8234d1-e4fe-46e1-8510-1a012cfee29a",
+				"method": "POST"
+			},
+			{
+				"id": "a058faec-cab7-461e-90eb-cb2741fb6fb4",
+				"method": "GET"
+			},
+			{
+				"id": "3c263717-3b6c-42fe-9d2a-af66e5833807",
+				"method": "GET"
+			},
+			{
+				"id": "d636fed5-ba4d-46fa-8fad-14140f94c616",
+				"method": "PUT"
+			},
+			{
+				"id": "10cbf8b9-5799-4cee-96d2-d51983630670",
+				"method": "DELETE"
+			},
+			{
+				"id": "95f05f1d-5e5e-4ec7-b95b-36cf07585d69",
+				"method": "GET"
+			},
+			{
+				"id": "fc32cfbf-33cc-4239-a438-0e0307930de4",
+				"method": "POST"
+			},
+			{
+				"id": "8b375d5c-2e80-4ae8-bac6-055b964a47f9",
+				"method": "POST"
+			},
+			{
+				"id": "8325b48e-0afd-4b42-8a8e-8fc1cebeab60",
+				"method": "POST"
+			},
+			{
+				"id": "7c06f2d3-5950-4b9f-8ffb-e2050b8330ab",
+				"method": "GET"
+			},
+			{
+				"id": "8f2596db-13e2-4aaa-ada2-08f9d185409b",
+				"method": "GET"
+			},
+			{
+				"id": "6826f894-bb83-4591-bd0f-4ab3c1bcd60f",
+				"method": "PUT"
+			},
+			{
+				"id": "d729e030-a766-42a5-aae4-85c8e5589356",
+				"method": "DELETE"
+			},
+			{
+				"id": "af9ec466-cf86-4ae9-8787-766e82143555",
+				"method": "POST"
+			},
+			{
+				"id": "d312c31c-8cd9-404f-83f4-8170cc33427c",
+				"method": "POST"
+			},
+			{
+				"id": "4ca80f8a-7178-4084-bda6-74a1a693ff2a",
+				"method": "POST"
+			},
+			{
+				"id": "dc181164-23a7-4574-9f24-1e1d823d33ca",
+				"method": "POST"
+			},
+			{
+				"id": "dd9c10c9-6aef-4fac-95b3-0ede3d8b9cbe",
+				"method": "POST"
+			},
+			{
+				"id": "71891097-9984-4e6d-9a43-13498c49db98",
+				"method": "POST"
+			},
+			{
+				"id": "fa098b77-c4cb-4451-9ee7-9d21505a5d8f",
+				"method": "POST"
+			},
+			{
+				"id": "7bc335e4-bd00-4912-953f-825d27c0f899",
+				"method": "POST"
+			},
+			{
+				"id": "0886da9f-71cd-496a-8c49-4e15ddb1217f",
+				"method": "POST"
+			},
+			{
+				"id": "3b942298-6ec3-4e72-9ce1-6c5f7b75be5e",
+				"method": "POST"
+			},
+			{
+				"id": "cdd481f9-2be4-4b5f-af54-743791fef9fa",
+				"method": "GET"
+			},
+			{
+				"id": "aac2ac0b-ae8d-46b2-83a7-bf417a18857a",
+				"method": "GET"
+			},
+			{
+				"id": "6f68d413-79f9-47d4-aeb3-faee078fe204",
+				"method": "GET"
+			},
+			{
+				"id": "48f20c1a-6520-4b90-a9a3-667c9e675fa3",
+				"method": "GET"
+			},
+			{
+				"id": "3662417f-2d5f-4053-ab30-e067a8a5290b",
+				"method": "DELETE"
+			},
+			{
+				"id": "2f4fa6d2-a65a-44d7-94ef-a86782867d83",
+				"method": "DELETE"
+			},
+			{
+				"id": "5705d276-8d20-49bb-94c3-dfbe36b41533",
+				"method": "GET"
+			},
+			{
+				"id": "be6fecb8-23f6-4f7b-83f0-ead6eaa7f834",
+				"method": "POST"
+			},
+			{
+				"id": "a492e20f-cc57-40a9-8fa2-abc5ff436f89",
+				"method": "POST"
+			},
+			{
+				"id": "0627fc89-d1e7-40c8-af19-fda3f4f5ce4f",
+				"method": "POST"
+			}
+		]
+	}
+}
