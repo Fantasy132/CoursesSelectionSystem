@@ -1,0 +1,30 @@
+# Maven
+target/*
+!target/*.jar
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IDE
+.idea
+.vscode
+*.iws
+*.iml
+*.ipr
+.DS_Store
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+*.pdf
+
+# Test results
+*.log
+*.test
+
+# Others
+.mvn/wrapper/maven-wrapper.jar

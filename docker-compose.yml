@@ -1,0 +1,186 @@
+version: '3.8'
+
+networks:
+  course-cloud-network:
+    driver: bridge
+
+services:
+  # Nacos 服务注册与发现中心
+  # nacos:
+  #   image: nacos/nacos-server:v2.4.3
+  #   container_name: nacos-server
+  #   environment:
+  #     MODE: standalone
+  #     PREFER_HOST_MODE: hostname
+  #     SPRING_DATASOURCE_PLATFORM: embedded
+  #   ports:
+  #     - "8848:8848"
+  #     - "9848:9848"
+  #     - "8888:8080"
+  #   networks:
+  #     - course-cloud-network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "timeout 5 bash -c ':> /dev/tcp/localhost/8848' || exit 1"]
+  #     interval: 15s
+  #     timeout: 10s
+  #     retries: 10
+  #     start_period: 60s
+  #   restart: unless-stopped
+
+  # 用户数据库 - 端口改为 33061（避免 33060 X Protocol 冲突）
+  user-db:
+    image: mysql:8.0
+    container_name: user-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: user_user
+      MYSQL_PASSWORD: user_pass
+    ports:
+      - "33061:3306"  # 改为 33061
+    volumes:
+      - user-data:/var/lib/mysql
+    networks:
+      - course-cloud-network
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 课程目录数据库 - 端口 33070
+  catalog-db:
+    image: mysql:8.0
+    container_name: catalog-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: catalog_db
+      MYSQL_USER: catalog_user
+      MYSQL_PASSWORD: catalog_pass
+    ports:
+      - "33070:3306"
+    volumes:
+      - catalog-data:/var/lib/mysql
+    networks:
+      - course-cloud-network
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 选课数据库 - 端口 33080
+  enrollment-db:
+    image: mysql:8.0
+    container_name: enrollment-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: enrollment_db
+      MYSQL_USER: enrollment_user
+      MYSQL_PASSWORD: enrollment_pass
+    ports:
+      - "33080:3306"
+    volumes:
+      - enrollment-data:/var/lib/mysql
+    networks:
+      - course-cloud-network
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 用户服务 - 端口 8100
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://user-db:3306/user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: user_user
+      SPRING_DATASOURCE_PASSWORD: user_pass
+      # NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "false"
+      SERVER_PORT: 8100
+    ports:
+      - "8100:8100"
+    depends_on:
+      # nacos:
+      #   condition: service_healthy
+      user-db:
+        condition: service_healthy
+    networks:
+      - course-cloud-network
+    restart: unless-stopped
+
+  # 课程目录服务 - 端口 8101
+  catalog-service:
+    build:
+      context: ./catalog-service
+      dockerfile: Dockerfile
+    container_name: catalog-service
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://catalog-db:3306/catalog_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: catalog_user
+      SPRING_DATASOURCE_PASSWORD: catalog_pass
+      # NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "false"
+      SERVER_PORT: 8101
+    ports:
+      - "8101:8101"
+    depends_on:
+      # nacos:
+      #   condition: service_healthy
+      catalog-db:
+        condition: service_healthy
+    networks:
+      - course-cloud-network
+    restart: unless-stopped
+
+  # 选课服务 - 端口 8102
+  enrollment-service:
+    build:
+      context: ./enrollment-service
+      dockerfile: Dockerfile
+    container_name: enrollment-service
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://enrollment-db:3306/enrollment_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: enrollment_user
+      SPRING_DATASOURCE_PASSWORD: enrollment_pass
+      # NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "false"
+      USER_SERVICE_URL: http://user-service:8100
+      CATALOG_SERVICE_URL: http://catalog-service:8101
+      SERVER_PORT: 8102
+    ports:
+      - "8102:8102"
+    depends_on:
+      # nacos:
+      #   condition: service_healthy
+      enrollment-db:
+        condition: service_healthy
+      catalog-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+    networks:
+      - course-cloud-network
+    restart: unless-stopped
+
+volumes:
+  user-data:
+  catalog-data:
+  enrollment-data:
