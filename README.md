@@ -1,103 +1,671 @@
-# 校园选课系统（单体版）
+# 课程选课系统 (Course Selection System)
 
-> 基于 Spring Boot 的校园选课与教学资源管理平台
+## 📌 1. 项目简介
 
-## 📋 项目说明
+**项目名称：** 课程选课系统微服务版  
+**版本：** v1.2.0 (微服务架构)  
+**基于版本：** v1.0 单体应用  
+**拆分日期：** 2025年11月
 
-本项目是一个基于 Spring Boot 的单体架构选课管理系统，实现了课程管理、学生管理和选课管理三大核心功能。系统采用 RESTful API 设计，使用内存存储数据，为后续微服务架构改造打下基础。
+### 微服务架构说明
 
-### 主要功能
+本项目将原单体应用按照业务边界拆分为三个独立的微服务：
 
-- **课程管理**：创建、查询、更新、删除课程信息
-- **学生管理**：学生信息的增删改查，支持数据验证
-- **选课管理**：学生选课、退课，支持容量限制和重复检查
+1. **user-service（用户服务）**
+   - 负责学生/用户信息管理
+   - 提供学生的 CRUD 操作
+   - 端口：8100
 
-### 技术栈
+2. **catalog-service（课程目录服务）**
+   - 负责课程信息管理
+   - 提供课程的 CRUD 操作
+   - 管理课程容量和选课人数
+   - 端口：8101
 
-- **框架**：Spring Boot 3.4.x
-- **语言**：Java 24
-- **构建工具**：Maven
-- **数据存储**：ConcurrentHashMap（内存存储）
-- **API设计**：RESTful
-- **测试工具**：Postman
+3. **enrollment-service（选课服务）**
+   - 负责选课业务逻辑
+   - 通过 HTTP 调用 user-service 验证学生信息
+   - 通过 HTTP 调用 catalog-service 验证课程信息和更新选课人数
+   - 端口：8102
 
-## 🚀 如何运行项目
+---
 
-### 前置要求
+## 🏗️ 2. 架构图
 
-- JDK 17 或更高版本
-- Maven 3.6+ 或使用项目自带的 Maven Wrapper
-- IDE（推荐 IntelliJ IDEA 或 VS Code）
+```
+客户端 (Client)
+    ↓
+    ├─→ user-service (8100) → user_db (MySQL:33061)
+    │   └── 学生/用户管理
+    │       ├── 创建学生
+    │       ├── 查询学生
+    │       ├── 更新学生
+    │       └── 删除学生
+    │
+    ├─→ catalog-service (8101) → catalog_db (MySQL:33070)
+    │   └── 课程管理
+    │       ├── 创建课程
+    │       ├── 查询课程
+    │       ├── 更新课程
+    │       └── 删除课程
+    │
+    └─→ enrollment-service (8102) → enrollment_db (MySQL:33080)
+        ├── 选课管理
+        │   ├── 学生选课
+        │   ├── 退课
+        │   └── 查询选课记录
+        │
+        ├── HTTP调用 → user-service（验证学生存在性）
+        └── HTTP调用 → catalog-service（验证课程存在性和容量）
+```
 
-### 方式一：使用 Maven 命令
+### 服务间通信
+
+- enrollment-service 通过 **RestTemplate** 调用其他服务的 API
+- 选课时验证学生是否存在（调用 user-service）
+- 选课时验证课程是否存在（调用 catalog-service）
+- 检查课程容量是否已满
+- 更新课程的已选人数
+
+---
+
+## 🛠️ 3. 技术栈
+
+| 技术           | 版本    | 用途             |
+| -------------- | ------- | ---------------- |
+| Spring Boot    | 3.5.6   | 微服务框架       |
+| Java           | 21      | 开发语言         |
+| Maven          | 3.8.7   | 项目构建工具     |
+| MySQL          | 8.0     | 数据库           |
+| Hibernate/JPA  | 6.6.29  | ORM 框架         |
+| Docker         | 20.10+  | 容器化           |
+| Docker Compose | 2.0+    | 容器编排         |
+| RestTemplate   | -       | 服务间 HTTP 通信 |
+
+---
+
+## 💻 4. 环境要求
+
+### 开发环境
+
+- **JDK:** 21 或更高版本
+- **Maven:** 3.8+
+- **Docker:** 20.10+
+- **Docker Compose:** 2.0+
+- **操作系统:** Windows 10/11 + WSL2 或 Linux 或 macOS
+
+### 验证环境
 
 ```bash
-# 1. 克隆或下载项目到本地
-git clone [你的仓库地址]
-cd course-management-system
+# 检查 Java 版本
+java -version
 
-# 2. 编译项目
-mvn clean compile
+# 检查 Maven 版本
+mvn -version
 
-# 3. 运行项目
+# 检查 Docker 版本
+docker --version
+
+# 检查 Docker Compose 版本
+docker-compose --version
+```
+
+---
+
+## 🚀 5. 构建和运行步骤
+
+### 方式一：使用 Docker Compose（推荐）
+
+#### 步骤 1：克隆项目
+
+```bash
+git clone https://github.com/Fantasy132/CoursesSelectionSystem.git
+cd CoursesSelectionSystem
+```
+
+#### 步骤 2：构建 JAR 包
+
+```bash
+# 构建 user-service
+cd user-service
+mvn clean package -DskipTests
+cd ..
+
+# 构建 catalog-service
+cd catalog-service
+mvn clean package -DskipTests
+cd ..
+
+# 构建 enrollment-service
+cd enrollment-service
+mvn clean package -DskipTests
+cd ..
+```
+
+#### 步骤 3：启动所有服务
+
+```bash
+docker-compose up -d --build
+```
+
+#### 步骤 4：查看服务状态
+
+```bash
+docker-compose ps
+```
+
+期望输出：
+
+```
+NAME                 COMMAND                  SERVICE              STATUS              PORTS
+catalog-db           "docker-entrypoint.s…"   catalog-db           running (healthy)   0.0.0.0:33070->3306/tcp
+catalog-service      "java -jar app.jar"      catalog-service      running             0.0.0.0:8101->8101/tcp
+enrollment-db        "docker-entrypoint.s…"   enrollment-db        running (healthy)   0.0.0.0:33080->3306/tcp
+enrollment-service   "java -jar app.jar"      enrollment-service   running             0.0.0.0:8102->8102/tcp
+user-db              "docker-entrypoint.s…"   user-db              running (healthy)   0.0.0.0:33061->3306/tcp
+user-service         "java -jar app.jar"      user-service         running             0.0.0.0:8100->8100/tcp
+```
+
+#### 步骤 5：查看日志
+
+```bash
+# 查看所有服务日志
+docker-compose logs -f
+
+# 查看特定服务日志
+docker-compose logs -f user-service
+docker-compose logs -f catalog-service
+docker-compose logs -f enrollment-service
+```
+
+#### 步骤 6：停止服务
+
+```bash
+# 停止所有服务
+docker-compose down
+
+# 停止并删除数据卷（清空数据库）
+docker-compose down -v
+```
+
+### 方式二：本地开发运行
+
+#### 前置条件
+
+1. 安装并启动 MySQL 8.0
+2. 创建数据库：
+
+```sql
+-- 创建用户数据库
+CREATE DATABASE IF NOT EXISTS user_db;
+CREATE USER IF NOT EXISTS 'user_user'@'localhost' IDENTIFIED BY 'user_pass';
+GRANT ALL PRIVILEGES ON user_db.* TO 'user_user'@'localhost';
+
+-- 创建课程目录数据库
+CREATE DATABASE IF NOT EXISTS catalog_db;
+CREATE USER IF NOT EXISTS 'catalog_user'@'localhost' IDENTIFIED BY 'catalog_pass';
+GRANT ALL PRIVILEGES ON catalog_db.* TO 'catalog_user'@'localhost';
+
+-- 创建选课数据库
+CREATE DATABASE IF NOT EXISTS enrollment_db;
+CREATE USER IF NOT EXISTS 'enrollment_user'@'localhost' IDENTIFIED BY 'enrollment_pass';
+GRANT ALL PRIVILEGES ON enrollment_db.* TO 'enrollment_user'@'localhost';
+
+FLUSH PRIVILEGES;
+```
+
+#### 启动服务
+
+```bash
+# 终端 1：启动 user-service
+cd user-service
+mvn spring-boot:run
+
+# 终端 2：启动 catalog-service
+cd catalog-service
+mvn spring-boot:run
+
+# 终端 3：启动 enrollment-service
+cd enrollment-service
 mvn spring-boot:run
 ```
 
-### 方式二：使用 Maven Wrapper（推荐）
+---
+
+## 📚 6. API 文档
+
+### 基础 URL
+
+- **User Service:** `http://localhost:8100`
+- **Catalog Service:** `http://localhost:8101`
+- **Enrollment Service:** `http://localhost:8102`
+
+### 6.1 用户服务 API (user-service)
+
+#### 学生管理
+
+| 方法   | 路径                          | 说明             | 请求体                     | 响应码 |
+| ------ | ----------------------------- | ---------------- | -------------------------- | ------ |
+| GET    | `/api/students`               | 获取所有学生     | -                          | 200    |
+| GET    | `/api/students/{id}`          | 根据ID获取学生   | -                          | 200    |
+| GET    | `/api/students/studentId/{studentId}` | 根据学号获取学生 | -                          | 200    |
+| POST   | `/api/students`               | 创建学生         | Student JSON               | 201    |
+| PUT    | `/api/students/{id}`          | 更新学生信息     | Student JSON               | 200    |
+| DELETE | `/api/students/{id}`          | 删除学生         | -                          | 200    |
+
+**创建学生请求示例：**
+
+```json
+POST /api/students
+Content-Type: application/json
+
+{
+  "studentId": "2024001",
+  "name": "张三",
+  "major": "计算机科学与技术",
+  "grade": 2024,
+  "email": "zhangsan@example.edu.cn"
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "studentId": "2024001",
+    "name": "张三",
+    "major": "计算机科学与技术",
+    "grade": 2024,
+    "email": "zhangsan@example.edu.cn",
+    "createdAt": "2025-12-03T10:30:00"
+  }
+}
+```
+
+### 6.2 课程目录服务 API (catalog-service)
+
+#### 课程管理
+
+| 方法   | 路径                               | 说明               | 请求体       | 响应码 |
+| ------ | ---------------------------------- | ------------------ | ------------ | ------ |
+| GET    | `/api/courses`                     | 获取所有课程       | -            | 200    |
+| GET    | `/api/courses/{id}`                | 根据ID获取课程     | -            | 200    |
+| GET    | `/api/courses/code/{code}`         | 根据课程代码获取   | -            | 200    |
+| POST   | `/api/courses`                     | 创建课程           | Course JSON  | 201    |
+| PUT    | `/api/courses/{id}`                | 更新课程信息       | Course JSON  | 200    |
+| PUT    | `/api/courses/{id}/update-enrolled` | 更新已选人数       | enrolled: int | 200    |
+| DELETE | `/api/courses/{id}`                | 删除课程           | -            | 200    |
+
+**创建课程请求示例：**
+
+```json
+POST /api/courses
+Content-Type: application/json
+
+{
+  "code": "CS101",
+  "title": "计算机科学导论",
+  "instructor": {
+    "name": "张教授",
+    "email": "zhang@example.edu.cn",
+    "department": "计算机学院"
+  },
+  "scheduleSlot": {
+    "dayOfWeek": "MONDAY",
+    "startTime": "08:00",
+    "endTime": "10:00"
+  },
+  "capacity": 60,
+  "enrolled": 0
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": {
+    "id": "650e8400-e29b-41d4-a716-446655440001",
+    "code": "CS101",
+    "title": "计算机科学导论",
+    "instructor": {
+      "id": null,
+      "name": "张教授",
+      "email": "zhang@example.edu.cn"
+    },
+    "schedule": null,
+    "capacity": 60,
+    "enrolled": 0,
+    "createdAt": "2025-12-03T10:35:00"
+  }
+}
+```
+
+### 6.3 选课服务 API (enrollment-service)
+
+#### 选课管理
+
+| 方法   | 路径                                  | 说明                 | 请求体           | 响应码 |
+| ------ | ------------------------------------- | -------------------- | ---------------- | ------ |
+| GET    | `/api/enrollments`                    | 获取所有选课记录     | -                | 200    |
+| GET    | `/api/enrollments/student/{studentId}` | 获取学生的选课记录   | -                | 200    |
+| GET    | `/api/enrollments/course/{courseId}`   | 获取课程的选课记录   | -                | 200    |
+| POST   | `/api/enrollments`                    | 学生选课             | Enrollment JSON  | 201    |
+| DELETE | `/api/enrollments/{id}`               | 退课                 | -                | 200    |
+
+**学生选课请求示例：**
+
+```json
+POST /api/enrollments
+Content-Type: application/json
+
+{
+  "courseId": "650e8400-e29b-41d4-a716-446655440001",
+  "studentId": "2024001"
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": {
+    "id": "750e8400-e29b-41d4-a716-446655440002",
+    "courseId": "650e8400-e29b-41d4-a716-446655440001",
+    "studentId": "2024001",
+    "status": "ACTIVE",
+    "enrolledAt": "2025-12-03T10:40:00"
+  }
+}
+```
+
+### 错误响应格式
+
+所有服务的错误响应格式统一：
+
+```json
+{
+  "code": 404,
+  "message": "Student not found with id: 9999999",
+  "data": null
+}
+```
+
+常见错误码：
+- `400` - 请求参数错误、业务逻辑错误（如重复选课、课程已满）
+- `404` - 资源不存在
+- `500` - 服务器内部错误
+
+---
+
+## 🧪 7. 测试说明
+
+### 自动化测试脚本
+
+项目提供了完整的自动化测试脚本 `test-services.sh`，测试所有功能和服务间通信。
+
+#### 运行测试
 
 ```bash
-# Windows
-.\mvnw.cmd spring-boot:run
+# 在 WSL 或 Linux/Mac 中运行
+bash test-services.sh
 
-# Linux/Mac
-./mvnw spring-boot:run
+# 或者在 Windows PowerShell 中运行
+wsl bash test-services.sh
 ```
 
-### 方式三：使用 IDE
+#### 测试覆盖内容
 
-1. 导入项目到 IDE（File → Open → 选择项目文件夹）
-2. 等待 Maven 依赖下载完成
-3. 找到主类 `CourseApplication.java`
-4. 右键选择 `Run 'CourseApplication'`
+测试脚本会自动执行以下测试：
 
-### 验证运行
+1. ✅ **用户服务测试**
+   - 创建学生
+   - 获取所有学生
+   - 按学号查询学生
+   - 更新和删除学生
 
-项目启动成功后，会在控制台看到类似输出：
+2. ✅ **课程目录服务测试**
+   - 创建课程
+   - 获取所有课程
+   - 按课程代码查询
+   - 更新课程信息
+
+3. ✅ **选课服务测试**
+   - 学生选课（验证服务间通信）
+   - 查询选课记录
+   - 按学生/课程查询选课记录
+   - 退课功能
+
+4. ✅ **业务逻辑验证**
+   - 学生不存在时选课失败（404）
+   - 课程不存在时选课失败（404）
+   - 重复选课检测（400）
+   - 课程容量统计正确性
+   - 课程已选人数自动更新
+
+5. ✅ **服务间通信测试**
+   - enrollment-service → user-service
+   - enrollment-service → catalog-service
+
+#### 预期输出
+
+测试成功时会显示：
 
 ```
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::               (v3.4.0)
-
-INFO: Started CourseApplication in 2.345 seconds
+=== 测试完成 ===
+测试覆盖内容：
+  ✓ 用户服务 CRUD 操作
+  ✓ 课程目录服务 CRUD 操作
+  ✓ 选课服务业务逻辑
+  ✓ 服务间通信（enrollment -> user, catalog）
+  ✓ 学生不存在错误处理
+  ✓ 课程不存在错误处理
+  ✓ 重复选课检查
+  ✓ 课程容量统计
+  ✓ 按学号/课程代码查询
 ```
 
-**默认访问地址**：`http://localhost:8080`
+### 手动测试
 
-### 修改端口（可选）
+#### 使用 curl 测试
 
-如果 8080 端口被占用，修改 `src/main/resources/application.yml`：
+```bash
+# 1. 创建学生
+curl -X POST http://localhost:8100/api/students \
+  -H "Content-Type: application/json" \
+  -d '{
+    "studentId": "2024001",
+    "name": "张三",
+    "major": "计算机科学与技术",
+    "grade": 2024,
+    "email": "zhangsan@example.edu.cn"
+  }'
+
+# 2. 创建课程
+curl -X POST http://localhost:8101/api/courses \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "CS101",
+    "title": "计算机科学导论",
+    "instructor": {
+      "name": "张教授",
+      "email": "zhang@example.edu.cn",
+      "department": "计算机学院"
+    },
+    "scheduleSlot": {
+      "dayOfWeek": "MONDAY",
+      "startTime": "08:00",
+      "endTime": "10:00"
+    },
+    "capacity": 60,
+    "enrolled": 0
+  }'
+
+# 3. 学生选课（需要替换实际的 courseId）
+curl -X POST http://localhost:8102/api/enrollments \
+  -H "Content-Type: application/json" \
+  -d '{
+    "courseId": "你的课程ID",
+    "studentId": "2024001"
+  }'
+```
+
+#### 使用 Postman 测试
+
+1. 导入 Postman Collection（如有提供）
+2. 设置环境变量：
+   - `user_service_url`: `http://localhost:8100`
+   - `catalog_service_url`: `http://localhost:8101`
+   - `enrollment_service_url`: `http://localhost:8102`
+3. 按照 API 文档顺序测试各个接口
+
+### 清空测试数据
+
+如需重新开始测试，清空所有数据：
+
+```bash
+docker-compose down -v
+docker-compose up -d --build
+```
+
+---
+
+## 📝 项目结构
+
+```
+CSS_microservices/
+├── user-service/              # 用户服务
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/zjsu/ybz/course/
+│   │       │       ├── controller/    # 控制器
+│   │       │       ├── service/       # 业务逻辑
+│   │       │       ├── repository/    # 数据访问
+│   │       │       ├── model/         # 实体类
+│   │       │       └── config/        # 配置类
+│   │       └── resources/
+│   │           └── application.yml    # 配置文件
+│   ├── Dockerfile
+│   ├── pom.xml
+│   └── mysql.sql
+│
+├── catalog-service/           # 课程目录服务
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/zjsu/ybz/course/
+│   │       │       ├── controller/
+│   │       │       ├── service/
+│   │       │       ├── repository/
+│   │       │       └── model/
+│   │       └── resources/
+│   │           └── application.yml
+│   ├── Dockerfile
+│   ├── pom.xml
+│   └── mysql.sql
+│
+├── enrollment-service/        # 选课服务
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/zjsu/ybz/course/
+│   │       │       ├── controller/
+│   │       │       ├── service/
+│   │       │       ├── repository/
+│   │       │       ├── model/
+│   │       │       ├── config/
+│   │       │       └── exception/     # 异常处理
+│   │       └── resources/
+│   │           └── application.yml
+│   ├── Dockerfile
+│   ├── pom.xml
+│   └── mysql.sql
+│
+├── docker-compose.yml         # Docker Compose 配置
+├── test-services.sh          # 自动化测试脚本
+└── README.md                 # 项目文档
+```
+
+---
+
+## 🔧 常见问题
+
+### Q1: 端口被占用怎么办？
+
+修改 `docker-compose.yml` 中的端口映射：
 
 ```yaml
-server:
-  port: 8081  # 修改为其他端口
+services:
+  user-service:
+    ports:
+      - "8200:8100"  # 将本地端口改为 8200
 ```
 
-## 📚 API 接口列表
+### Q2: 数据库连接失败？
 
-### 基础URL
+检查 MySQL 容器是否正常运行：
 
+```bash
+docker-compose ps
+docker-compose logs user-db
 ```
-http://localhost:8080
+
+### Q3: 服务启动失败？
+
+查看服务日志：
+
+```bash
+docker-compose logs -f user-service
 ```
 
-### 一、课程管理 API
+常见原因：
+- JAR 包未构建或路径错误
+- 数据库未就绪
+- 端口冲突
 
-| 方法 | 路径 | 说明 | 状态码 |
+### Q4: 如何重新构建某个服务？
+
+```bash
+# 重新构建并启动特定服务
+docker-compose up -d --build user-service
+```
+
+---
+
+## 📄 许可证
+
+本项目仅用于学习和研究目的。
+
+---
+
+## 👥 贡献者
+
+- **开发者**: Fantasy132
+- **GitHub**: https://github.com/Fantasy132/CoursesSelectionSystem
+
+---
+
+## 📞 联系方式
+
+如有问题或建议，请通过以下方式联系：
+
+- 提交 Issue: https://github.com/Fantasy132/CoursesSelectionSystem/issues
+- Pull Request: https://github.com/Fantasy132/CoursesSelectionSystem/pulls
+
+---
+
+**最后更新**: 2025年12月3日  
+**版本**: v1.2.0
+
 |------|------|------|--------|
 | GET | `/api/courses` | 查询所有课程 | 200 |
 | GET | `/api/courses/{id}` | 查询单个课程 | 200, 404 |
