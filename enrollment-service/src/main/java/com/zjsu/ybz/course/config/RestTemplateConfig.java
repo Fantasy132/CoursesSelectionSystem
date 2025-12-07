@@ -1,5 +1,6 @@
 package com.zjsu.ybz.course.config;
 
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -12,15 +13,15 @@ import org.springframework.web.client.RestTemplate;
 public class RestTemplateConfig {
     
     /**
-     * 创建 RestTemplate
-     * 不使用负载均衡，直接通过配置的 URL 调用服务
+     * 创建支持负载均衡的 RestTemplate
+     * 使用 @LoadBalanced 注解后，可以通过服务名调用其他服务
      * 
      * 使用示例:
-     * restTemplate.getForObject(userServiceUrl + "/api/students/{id}", ...)
-     * 其中 userServiceUrl 从配置文件中读取
+     * restTemplate.getForObject("http://user-service/api/students/{id}", ...)
+     * 其中 user-service 是在 Nacos 中注册的服务名
      */
     @Bean
-    // @LoadBalanced  // 禁用 Nacos 服务发现时需要注释掉
+    @LoadBalanced
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }

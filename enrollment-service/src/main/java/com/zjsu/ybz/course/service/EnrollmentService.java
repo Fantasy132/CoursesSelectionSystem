@@ -9,7 +9,6 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -21,24 +20,22 @@ import java.util.*;
 public class EnrollmentService {
     private static final Logger log = LoggerFactory.getLogger(EnrollmentService.class);
     
+    // 服务名称常量
+    private static final String USER_SERVICE = "user-service";
+    private static final String CATALOG_SERVICE = "catalog-service";
+    
     @Autowired
     private EnrollmentRepository enrollmentRepository;
     
     @Autowired
     private RestTemplate restTemplate;
-    
-    @Value("${user-service.url}")
-    private String userServiceUrl;
-    
-    @Value("${catalog-service.url}")
-    private String catalogServiceUrl;
 
     @Transactional
     public Enrollment enroll(String courseId, String studentId) {
         log.info("开始处理选课请求: courseId={}, studentId={}", courseId, studentId);
         
-        // 1. 调用 user-service 验证学生是否存在
-        String userUrl = userServiceUrl + "/api/students/studentId/" + studentId;
+        // 1. 调用 user-service 验证学生是否存在 (使用服务名)
+        String userUrl = "http://" + USER_SERVICE + "/api/students/studentId/" + studentId;
         Map<String, Object> studentResponse;
         try {
             log.debug("调用用户服务验证学生: url={}", userUrl);
@@ -60,8 +57,8 @@ public class EnrollmentService {
         
         log.debug("学生验证通过: studentId={}", studentId);
 
-        // 2. 调用 catalog-service 验证课程是否存在
-        String courseUrl = catalogServiceUrl + "/api/courses/" + courseId;
+        // 2. 调用 catalog-service 验证课程是否存在 (使用服务名)
+        String courseUrl = "http://" + CATALOG_SERVICE + "/api/courses/" + courseId;
         Map<String, Object> courseResponse;
         try {
             log.debug("调用课程目录服务: url={}", courseUrl);
@@ -130,8 +127,8 @@ public class EnrollmentService {
         String studentId = enrollment.getStudentId();
         log.debug("退课信息: courseId={}, studentId={}", courseId, studentId);
         
-        // 获取课程当前已选人数
-        String url = catalogServiceUrl + "/api/courses/" + courseId;
+        // 获取课程当前已选人数 (使用服务名)
+        String url = "http://" + CATALOG_SERVICE + "/api/courses/" + courseId;
         try {
             log.debug("调用课程目录服务: url={}", url);
             Map<String, Object> courseResponse = restTemplate.getForObject(url, Map.class);
@@ -161,7 +158,8 @@ public class EnrollmentService {
     }
     
     private void updateCourseEnrolledCount(String courseId, int newCount) {
-        String url = catalogServiceUrl + "/api/courses/" + courseId + "/update-enrolled";
+        // 使用服务名调用 catalog-service
+        String url = "http://" + CATALOG_SERVICE + "/api/courses/" + courseId + "/update-enrolled";
         Map<String, Integer> request = new HashMap<>();
         request.put("enrolled", newCount);
         

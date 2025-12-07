@@ -6,26 +6,29 @@ networks:
 
 services:
   # Nacos 服务注册与发现中心
-  # nacos:
-  #   image: nacos/nacos-server:v2.4.3
-  #   container_name: nacos-server
-  #   environment:
-  #     MODE: standalone
-  #     PREFER_HOST_MODE: hostname
-  #     SPRING_DATASOURCE_PLATFORM: embedded
-  #   ports:
-  #     - "8848:8848"
-  #     - "9848:9848"
-  #     - "8888:8080"
-  #   networks:
-  #     - course-cloud-network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "timeout 5 bash -c ':> /dev/tcp/localhost/8848' || exit 1"]
-  #     interval: 15s
-  #     timeout: 10s
-  #     retries: 10
-  #     start_period: 60s
-  #   restart: unless-stopped
+  nacos:
+    image: nacos/nacos-server:v3.1.0
+    container_name: nacos
+    environment:
+      MODE: standalone
+      NACOS_AUTH_ENABLE: "false"
+      NACOS_AUTH_TOKEN: SecretKey012345678901234567890123456789012345678901234567
+      NACOS_AUTH_IDENTITY_KEY: serverIdentity
+      NACOS_AUTH_IDENTITY_VALUE: security
+      SPRING_DATASOURCE_PLATFORM: ""
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "8849:8080"
+    networks:
+      - course-cloud-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8848/nacos || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
 
   # 用户数据库 - 端口改为 33061（避免 33060 X Protocol 冲突）
   user-db:
@@ -110,14 +113,14 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://user-db:3306/user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: user_user
       SPRING_DATASOURCE_PASSWORD: user_pass
-      # NACOS_SERVER_ADDR: nacos:8848
-      NACOS_ENABLED: "false"
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "true"
       SERVER_PORT: 8100
     ports:
       - "8100:8100"
     depends_on:
-      # nacos:
-      #   condition: service_healthy
+      nacos:
+        condition: service_healthy
       user-db:
         condition: service_healthy
     networks:
@@ -135,14 +138,14 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://catalog-db:3306/catalog_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: catalog_user
       SPRING_DATASOURCE_PASSWORD: catalog_pass
-      # NACOS_SERVER_ADDR: nacos:8848
-      NACOS_ENABLED: "false"
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "true"
       SERVER_PORT: 8101
     ports:
       - "8101:8101"
     depends_on:
-      # nacos:
-      #   condition: service_healthy
+      nacos:
+        condition: service_healthy
       catalog-db:
         condition: service_healthy
     networks:
@@ -160,16 +163,14 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://enrollment-db:3306/enrollment_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: enrollment_user
       SPRING_DATASOURCE_PASSWORD: enrollment_pass
-      # NACOS_SERVER_ADDR: nacos:8848
-      NACOS_ENABLED: "false"
-      USER_SERVICE_URL: http://user-service:8100
-      CATALOG_SERVICE_URL: http://catalog-service:8101
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "true"
       SERVER_PORT: 8102
     ports:
       - "8102:8102"
     depends_on:
-      # nacos:
-      #   condition: service_healthy
+      nacos:
+        condition: service_healthy
       enrollment-db:
         condition: service_healthy
       catalog-service:

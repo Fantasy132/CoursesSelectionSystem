@@ -16,8 +16,14 @@ spring:
         heart-beat-interval: 5000
         heart-beat-timeout: 15000
         enabled: ${NACOS_ENABLED:true}
-        username: nacos
-        password: nacos
+        # 添加元数据
+        metadata:
+          version: 1.0.0
+          service-type: enrollment-management
+        # 健康检查配置
+        watch:
+          enabled: true
+        register-enabled: true
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:33080/enrollment_db?useSSL=false&serverTimezone=UTC}
     username: ${SPRING_DATASOURCE_USERNAME:enrollment_user}
@@ -31,20 +37,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,nacos-discovery
   endpoint:
     health:
       show-details: always
-
-# 课程目录服务配置（使用 Nacos 服务发现）
-# user-service:
-#   name: user-service  # Nacos 中的服务名
-
-  # 服务地址配置
-user-service:
-  url: ${USER_SERVICE_URL:http://localhost:8100}  # 开发环境
-  # url: http://user-service:8100  # Docker环境（通过环境变量设置）
-
-catalog-service:
-  url: ${CATALOG_SERVICE_URL:http://localhost:8101}  # 开发环境
-  # url: http://catalog-service:8101  # Docker环境（通过环境变量设置）
+  health:
+    nacos:
+      enabled: true

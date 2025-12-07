@@ -16,8 +16,14 @@ spring:
         heart-beat-interval: 5000
         heart-beat-timeout: 15000
         enabled: ${NACOS_ENABLED:true}
-        username: nacos
-        password: nacos
+        # 添加元数据
+        metadata:
+          version: 1.0.0
+          service-type: user-management
+        # 健康检查配置
+        watch:
+          enabled: true
+        register-enabled: true
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:33061/user_db?useSSL=false&serverTimezone=UTC}
     username: ${SPRING_DATASOURCE_USERNAME:user_user}
@@ -31,10 +37,13 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,nacos-discovery
   endpoint:
     health:
       show-details: always
+  health:
+    nacos:
+      enabled: true
 
 # 课程目录服务配置（使用 Nacos 服务发现）
 catalog-service:
