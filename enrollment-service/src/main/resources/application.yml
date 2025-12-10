@@ -24,6 +24,15 @@ spring:
         watch:
           enabled: true
         register-enabled: true
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: FULL
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:33080/enrollment_db?useSSL=false&serverTimezone=UTC}
     username: ${SPRING_DATASOURCE_USERNAME:enrollment_user}
@@ -33,14 +42,49 @@ spring:
       ddl-auto: update
     show-sql: true
 
+# Resilience4j 熔断器配置
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        recordExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - feign.FeignException
+    instances:
+      userClient:
+        baseConfig: default
+      catalogClient:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 5s
+
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,nacos-discovery
+        include: health,info,nacos-discovery,circuitbreakers,circuitbreakerevents
   endpoint:
     health:
       show-details: always
   health:
     nacos:
       enabled: true
+    circuitbreakers:
+      enabled: true
+
+# Feign 日志配置
+logging:
+  level:
+    com.zjsu.ybz.course.client: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG

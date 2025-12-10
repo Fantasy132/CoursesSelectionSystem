@@ -2,7 +2,10 @@ package com.zjsu.ybz.course.controller;
 
 import com.zjsu.ybz.course.model.Course;
 import com.zjsu.ybz.course.service.CourseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +14,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/courses")
 public class CourseController {
+    private static final Logger log = LoggerFactory.getLogger(CourseController.class);
+    
     @Autowired
     private CourseService courseService;
+    
+    @Value("${server.port}")
+    private String serverPort;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<Course>>> getAllCourses(){  // 获取所有课程
@@ -22,6 +30,7 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Course>> getCourseById(@PathVariable String id){  // 通过课程ID得到课程信息
+        log.info("【实例 {}】收到请求: GET /api/courses/{}", serverPort, id);
         return courseService.getCourseById(id)
                 .map(course -> ResponseEntity.ok(ApiResponse.success(course)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -47,6 +56,7 @@ public class CourseController {
     public ResponseEntity<ApiResponse<Course>> updateCourse( // 更新课程信息
             @PathVariable String id,
             @RequestBody Course course){
+        log.info("【实例 {}】收到请求: PUT /api/courses/{}", serverPort, id);
         try{
             Course updated = courseService.updateCourse(id, course);
             return ResponseEntity.ok(ApiResponse.success(updated));

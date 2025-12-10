@@ -51,17 +51,33 @@
 			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
 		</dependency>
 
-		<!-- Spring Cloud LoadBalancer for service discovery -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
-		</dependency>
+	<!-- Spring Cloud LoadBalancer for service discovery -->
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-loadbalancer</artifactId>
+	</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+	<!-- OpenFeign for declarative REST client -->
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-openfeign</artifactId>
+	</dependency>
+
+	<!-- Resilience4j for circuit breaker -->
+	<dependency>
+		<groupId>io.github.resilience4j</groupId>
+		<artifactId>resilience4j-spring-boot3</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-test</artifactId>
+		<scope>test</scope>
+	</dependency>
         <!-- JPA 依赖 (包含 @Entity, @Embeddable 等) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

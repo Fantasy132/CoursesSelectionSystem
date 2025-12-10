@@ -102,12 +102,12 @@ services:
       timeout: 5s
       retries: 5
 
-  # 用户服务 - 端口 8100
-  user-service:
+  # 用户服务实例 1 - 端口 8100
+  user-service-1:
     build:
       context: ./user-service
       dockerfile: Dockerfile
-    container_name: user-service
+    container_name: user-service-1
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:mysql://user-db:3306/user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -127,12 +127,62 @@ services:
       - course-cloud-network
     restart: unless-stopped
 
-  # 课程目录服务 - 端口 8101
-  catalog-service:
+  # 用户服务实例 2 - 端口 8110
+  user-service-2:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: user-service-2
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://user-db:3306/user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: user_user
+      SPRING_DATASOURCE_PASSWORD: user_pass
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "true"
+      SERVER_PORT: 8110
+    ports:
+      - "8110:8110"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      user-db:
+        condition: service_healthy
+    networks:
+      - course-cloud-network
+    restart: unless-stopped
+
+  # 用户服务实例 3 - 端口 8120
+  user-service-3:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: user-service-3
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://user-db:3306/user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: user_user
+      SPRING_DATASOURCE_PASSWORD: user_pass
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "true"
+      SERVER_PORT: 8120
+    ports:
+      - "8120:8120"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      user-db:
+        condition: service_healthy
+    networks:
+      - course-cloud-network
+    restart: unless-stopped
+
+  # 课程目录服务实例 1 - 端口 8101
+  catalog-service-1:
     build:
       context: ./catalog-service
       dockerfile: Dockerfile
-    container_name: catalog-service
+    container_name: catalog-service-1
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:mysql://catalog-db:3306/catalog_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -143,6 +193,56 @@ services:
       SERVER_PORT: 8101
     ports:
       - "8101:8101"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      catalog-db:
+        condition: service_healthy
+    networks:
+      - course-cloud-network
+    restart: unless-stopped
+
+  # 课程目录服务实例 2 - 端口 8111
+  catalog-service-2:
+    build:
+      context: ./catalog-service
+      dockerfile: Dockerfile
+    container_name: catalog-service-2
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://catalog-db:3306/catalog_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: catalog_user
+      SPRING_DATASOURCE_PASSWORD: catalog_pass
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "true"
+      SERVER_PORT: 8111
+    ports:
+      - "8111:8111"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      catalog-db:
+        condition: service_healthy
+    networks:
+      - course-cloud-network
+    restart: unless-stopped
+
+  # 课程目录服务实例 3 - 端口 8121
+  catalog-service-3:
+    build:
+      context: ./catalog-service
+      dockerfile: Dockerfile
+    container_name: catalog-service-3
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://catalog-db:3306/catalog_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: catalog_user
+      SPRING_DATASOURCE_PASSWORD: catalog_pass
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "true"
+      SERVER_PORT: 8121
+    ports:
+      - "8121:8121"
     depends_on:
       nacos:
         condition: service_healthy
@@ -173,9 +273,17 @@ services:
         condition: service_healthy
       enrollment-db:
         condition: service_healthy
-      catalog-service:
+      catalog-service-1:
         condition: service_started
-      user-service:
+      catalog-service-2:
+        condition: service_started
+      catalog-service-3:
+        condition: service_started
+      user-service-1:
+        condition: service_started
+      user-service-2:
+        condition: service_started
+      user-service-3:
         condition: service_started
     networks:
       - course-cloud-network
