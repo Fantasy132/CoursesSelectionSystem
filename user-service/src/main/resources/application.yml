@@ -45,6 +45,12 @@ management:
     nacos:
       enabled: true
 
+# JWT 配置（HS512 算法）
+jwt:
+  # 密钥必须至少 64 字节（512 位）以支持 HS512 算法
+  secret: YourSecretKeyForJWTTokenGenerationMustBeAtLeast512BitsLongForHS512AlgorithmPleaseChangeThisInProduction
+  expiration: 86400000  # 24小时（86400000 毫秒）
+
 # 课程目录服务配置（使用 Nacos 服务发现）
 catalog-service:
   name: catalog-service  # Nacos 中的服务名

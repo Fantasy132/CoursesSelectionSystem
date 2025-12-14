@@ -254,7 +254,7 @@ mvn spring-boot:run
 
 **访问地址：**
 
-- 地址：http://localhost:8849/
+- 地址：
 
 **默认账号密码：**
 

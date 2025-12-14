@@ -25,6 +25,9 @@ public class Student {
     @Column(nullable = false)
     private String email;
     
+    @Column(nullable = false)
+    private String password;
+    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -72,6 +75,13 @@ public class Student {
     }
     public void setEmail(String email){
         this.email = email;
+    }
+
+    public String getPassword(){
+        return password;
+    }
+    public void setPassword(String password){
+        this.password = password;
     }
 
     public LocalDateTime getCreatedAt(){

@@ -1,0 +1,266 @@
+{
+  "info": {
+    "name": "Gateway Service API Tests",
+    "description": "微服务网关 API 测试集合",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Gateway Health",
+      "item": [
+        {
+          "name": "健康检查",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/actuator/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["actuator", "health"]
+            }
+          }
+        },
+        {
+          "name": "查看路由配置",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/actuator/gateway/routes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["actuator", "gateway", "routes"]
+            }
+          }
+        },
+        {
+          "name": "查看熔断器状态",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/actuator/circuitbreakers",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["actuator", "circuitbreakers"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catalog Service (课程服务)",
+      "item": [
+        {
+          "name": "获取所有课程",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/api/courses",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "courses"]
+            }
+          }
+        },
+        {
+          "name": "获取指定课程",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/api/courses/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "courses", "1"]
+            }
+          }
+        },
+        {
+          "name": "通过课程代码查询",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/api/courses/code/CS101",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "courses", "code", "CS101"]
+            }
+          }
+        },
+        {
+          "name": "创建课程",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"CS101\",\n  \"name\": \"计算机科学导论\",\n  \"credits\": 3,\n  \"capacity\": 50\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8090/api/courses",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "courses"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Service (用户服务)",
+      "item": [
+        {
+          "name": "获取所有学生",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/api/students",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "students"]
+            }
+          }
+        },
+        {
+          "name": "获取指定学生",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/api/students/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "students", "1"]
+            }
+          }
+        },
+        {
+          "name": "通过学号查询",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/api/students/studentId/2021001",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "students", "studentId", "2021001"]
+            }
+          }
+        },
+        {
+          "name": "创建学生",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"2021001\",\n  \"name\": \"张三\",\n  \"email\": \"zhangsan@example.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8090/api/students",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "students"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Enrollment Service (选课服务)",
+      "item": [
+        {
+          "name": "获取所有选课记录",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/api/enrollments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "enrollments"]
+            }
+          }
+        },
+        {
+          "name": "获取某课程的选课记录",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/api/enrollments/course/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "enrollments", "course", "1"]
+            }
+          }
+        },
+        {
+          "name": "获取某学生的选课记录",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8090/api/enrollments/student/2021001",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "enrollments", "student", "2021001"]
+            }
+          }
+        },
+        {
+          "name": "创建选课记录",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"2021001\",\n  \"courseId\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8090/api/enrollments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "enrollments"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

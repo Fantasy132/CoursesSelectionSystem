@@ -289,6 +289,40 @@ services:
       - course-cloud-network
     restart: unless-stopped
 
+  # API 网关服务 - 端口 8090
+  gateway-service:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+    container_name: gateway-service
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_ENABLED: "true"
+      SERVER_PORT: 8090
+    ports:
+      - "8090:8090"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      user-service-1:
+        condition: service_started
+      user-service-2:
+        condition: service_started
+      user-service-3:
+        condition: service_started
+      catalog-service-1:
+        condition: service_started
+      catalog-service-2:
+        condition: service_started
+      catalog-service-3:
+        condition: service_started
+      enrollment-service:
+        condition: service_started
+    networks:
+      - course-cloud-network
+    restart: unless-stopped
+
 volumes:
   user-data:
   catalog-data:

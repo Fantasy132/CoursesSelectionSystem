@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS 跨域测试 - Gateway API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.3s;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .result pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .token-info {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .token-info strong {
+            color: #856404;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .cors-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .cors-indicator .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .cors-indicator .dot.active {
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .headers-list {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .headers-list div {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        .headers-list div:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 CORS 跨域测试页面</h1>
+        <p class="subtitle">测试 Gateway 的 CORS 配置和 JWT 认证</p>
+
+        <div class="cors-indicator">
+            <div class="dot" id="corsStatusDot"></div>
+            <span id="corsStatus">等待测试...</span>
+        </div>
+
+        <!-- 登录部分 -->
+        <div class="section">
+            <h2>1. 登录获取 Token</h2>
+            <div class="input-group">
+                <label>API 地址</label>
+                <input type="text" id="apiUrl" value="http://localhost:8090" placeholder="http://localhost:8090">
+            </div>
+            <div class="input-group">
+                <label>学号</label>
+                <input type="text" id="studentId" value="2021001" placeholder="请输入学号">
+            </div>
+            <div class="input-group">
+                <label>密码</label>
+                <input type="password" id="password" value="123456" placeholder="请输入密码">
+            </div>
+            <button onclick="login()">登录</button>
+            <button onclick="clearToken()">清除 Token</button>
+            
+            <div id="tokenInfo" class="token-info" style="display: none;">
+                <strong>Token:</strong> <span id="tokenValue"></span>
+            </div>
+            
+            <div class="result" id="loginResult" style="display: none;"></div>
+        </div>
+
+        <!-- API 测试部分 -->
+        <div class="section">
+            <h2>2. 测试受保护的 API（需要 Token）</h2>
+            <div class="grid">
+                <div>
+                    <button onclick="testApi('/api/courses', 'GET')">获取课程列表</button>
+                    <button onclick="testApi('/api/enrollments', 'GET')">获取选课列表</button>
+                    <button onclick="testApi('/api/students/2021001', 'GET')">获取学生信息</button>
+                </div>
+            </div>
+            <div class="result" id="apiResult" style="display: none;"></div>
+        </div>
+
+        <!-- CORS 响应头测试 -->
+        <div class="section">
+            <h2>3. CORS 响应头检查</h2>
+            <button onclick="checkCorsHeaders()">检查 CORS 响应头</button>
+            <div class="result" id="corsHeaders" style="display: none;"></div>
+        </div>
+
+        <!-- 预检请求测试 -->
+        <div class="section">
+            <h2>4. 预检请求测试（OPTIONS）</h2>
+            <button onclick="testPreflight()">发送预检请求</button>
+            <div class="result" id="preflightResult" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let token = localStorage.getItem('jwt_token');
+        
+        // 页面加载时显示 Token
+        if (token) {
+            showTokenInfo(token);
+        }
+
+        // 登录
+        async function login() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const studentId = document.getElementById('studentId').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('loginResult');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="status info">登录中...</div>';
+            
+            try {
+                const response = await fetch(`${apiUrl}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ studentId, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.token) {
+                    token = data.token;
+                    localStorage.setItem('jwt_token', token);
+                    showTokenInfo(token);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="status success">✓ 登录成功</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    
+                    updateCorsStatus(true, '登录成功，CORS 配置正常');
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status error">✗ 登录失败</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    updateCorsStatus(false, '登录失败');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="status error">✗ 请求失败（可能是 CORS 错误）</div>
+                    <pre>错误信息: ${error.message}
+
+可能的原因:
+1. Gateway 服务未启动
+2. CORS 配置不正确
+3. 网络连接问题
+
+请检查浏览器控制台的详细错误信息</pre>
+                `;
+                updateCorsStatus(false, 'CORS 错误或网络错误');
+                console.error('Login error:', error);
+            }
+        }
+
+        // 测试 API
+        async function testApi(endpoint, method = 'GET') {
+            if (!token) {
+                alert('请先登录获取 Token');
+                return;
+            }
+            
+            const apiUrl = document.getElementById('apiUrl').value;
+            const resultDiv = document.getElementById('apiResult');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="status info">请求中...</div>';
+            
+            try {
+                const response = await fetch(`${apiUrl}${endpoint}`, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                // 检查 Token 刷新提示
+                const refreshRequired = response.headers.get('X-Token-Refresh-Required');
+                let refreshWarning = '';
+                if (refreshRequired === 'true') {
+                    refreshWarning = '<div class="status info">⚠️ Token 即将过期，建议刷新</div>';
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        ${refreshWarning}
+                        <div class="status success">✓ 请求成功 (${response.status})</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    updateCorsStatus(true, 'API 请求成功，CORS 正常');
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status error">✗ 请求失败 (${response.status})</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="status error">✗ 请求失败（CORS 错误）</div>
+                    <pre>错误信息: ${error.message}
+
+请检查:
+1. Token 是否有效
+2. Gateway 服务是否运行
+3. CORS 配置是否正确</pre>
+                `;
+                updateCorsStatus(false, 'CORS 错误');
+                console.error('API error:', error);
+            }
+        }
+
+        // 检查 CORS 响应头
+        async function checkCorsHeaders() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const resultDiv = document.getElementById('corsHeaders');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="status info">检查中...</div>';
+            
+            try {
+                const response = await fetch(`${apiUrl}/api/auth/login`, {
+                    method: 'GET',
+                    headers: {
+                        'Origin': window.location.origin
+                    }
+                });
+                
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers'),
+                    'Access-Control-Expose-Headers': response.headers.get('Access-Control-Expose-Headers'),
+                    'Access-Control-Max-Age': response.headers.get('Access-Control-Max-Age')
+                };
+                
+                let headersHtml = '<div class="headers-list">';
+                for (const [key, value] of Object.entries(corsHeaders)) {
+                    if (value) {
+                        headersHtml += `<div><strong>${key}:</strong> ${value}</div>`;
+                    }
+                }
+                headersHtml += '</div>';
+                
+                resultDiv.innerHTML = `
+                    <div class="status success">✓ CORS 响应头</div>
+                    ${headersHtml}
+                `;
+                
+                updateCorsStatus(true, 'CORS 响应头正常');
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="status error">✗ 无法获取响应头</div>
+                    <pre>${error.message}</pre>
+                `;
+                updateCorsStatus(false, '无法获取 CORS 响应头');
+            }
+        }
+
+        // 测试预检请求
+        async function testPreflight() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const resultDiv = document.getElementById('preflightResult');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div class="status info">说明</div>
+                <pre>预检请求（OPTIONS）会自动由浏览器发送
+无法通过 JavaScript 直接模拟
+请在浏览器开发者工具的 Network 选项卡中查看
+
+预检请求会在以下情况下触发:
+1. 使用 PUT、DELETE、PATCH 等方法
+2. 使用自定义请求头（如 Authorization）
+3. Content-Type 为非简单类型
+
+请尝试发送一个 POST 请求来触发预检</pre>
+            `;
+        }
+
+        // 显示 Token 信息
+        function showTokenInfo(token) {
+            const tokenInfo = document.getElementById('tokenInfo');
+            const tokenValue = document.getElementById('tokenValue');
+            
+            tokenInfo.style.display = 'block';
+            tokenValue.textContent = token.substring(0, 50) + '...';
+        }
+
+        // 清除 Token
+        function clearToken() {
+            token = null;
+            localStorage.removeItem('jwt_token');
+            document.getElementById('tokenInfo').style.display = 'none';
+            document.getElementById('loginResult').innerHTML = '<div class="status info">Token 已清除</div>';
+            updateCorsStatus(false, 'Token 已清除');
+        }
+
+        // 更新 CORS 状态指示器
+        function updateCorsStatus(success, message) {
+            const dot = document.getElementById('corsStatusDot');
+            const status = document.getElementById('corsStatus');
+            
+            if (success) {
+                dot.classList.add('active');
+                status.textContent = `✓ ${message}`;
+                status.style.color = '#28a745';
+            } else {
+                dot.classList.remove('active');
+                status.textContent = `✗ ${message}`;
+                status.style.color = '#dc3545';
+            }
+        }
+    </script>
+</body>
+</html>
